@@ -1,12 +1,10 @@
-JavaScript XHR
+Asynchronous JavaScript
 ---
 
 ## Objectives
 
-1. Explain how JavaScript fetches data from remote resources
-2. Explain how XHR helps us write dynamic programs
-3. Practice initializing an XHR request
-4. Practice handling an XHR response
+1. Understand the consequences of JavaScript having asynchronous features
+2. Understand how this differs from other languages
 
 ## Introduction
 
