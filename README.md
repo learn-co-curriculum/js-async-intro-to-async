@@ -1,101 +1,176 @@
 Asynchronous JavaScript
 ---
 
+## Problem Statement
+
+Browsers have to manage a lot. They're animating a `gif`, they're displaying
+text, they're listening for clicks and scrolls, they're running JavaScript
+programs, they're streaming a SoundCloud demo in a tab.
+
+To efficiently do all that work, browsers use an _asynchronous_ execution model.
+That's a fancy way of saying "they do little bits for lots of things until
+they're done."
+
+In this lesson we'll build a foundation of understanding around the
+asynchronous execution model of JavaScript.
+
 ## Objectives
 
-1. Understand the consequences of JavaScript having asynchronous features
-2. Understand how this differs from other languages
+1. Establish a metaphor for synchronous versus asynchronous work
+2. Describe a synchronous code bloc
+3. Describe an asynchronous code bloc
+4. Identify a synchronous code bloc
+5. Identify an asynchronous code bloc
 
-## Introduction
+## Establish a Metaphor For Synchronous Versus Asynchronous Work
 
-As we have noticed with JavaScript, our code runs one step at a time.  One line
-of code will execute, and when it is complete the next line of code executes.
-Let's throw a wrench into that right now with the introduction of a JavaScript
-function called `setTimeout`.  Let's first explain the function by way of
-example.
+Let's imagine a chef in a kitchen preparing a big meal. There's only one chef
+in this kitchen.  The chef could prepare a boiled goose, then prepare
+some potatoes, then prepare some biscuits, then prepare a salad, and then serve
+it.
+
+![Boiled Goose](https://media.giphy.com/media/zE0zR9u9oR54Y/giphy.gif)
+
+Our diners would be treated to cold boiled goose, hardened potatoes, cold
+biscuits, and a fresh salad! This is not the goal. This meal was prepared in a
+_synchronous_ model, one-thing-after-the-other. Whatever happened "blocked" the
+rest of things that were waiting for work.
+
+_Instead_, our chef should move between each of these tasks quickly. The chef
+should use the _asynchronous_ execution model browsers use. They should stuff
+the goose, they should measure the ingredients for the biscuits, they should
+peel the potatoes, etc. in a loop, _as fast as possible_ so that all the tasks
+_seem_ to be advancing at the same time. If the chef were to adopt this
+_asynchronous_ model of work, the diners would be treated to piping-hot
+boiled goose, steaming potatoes, soft biscuits, and a fresh salad.
+
+![Stuffing](https://media.giphy.com/media/AGc4wSw993mOQ/giphy.gif)
+
+## Describe a Synchronous Code Bloc
+
+Thus far in JavaScript, we've written _synchronous_ code and the execution
+model didn't matter.
 
 ```js
-  setTimeout(function(){
-      alert('Hello world!')
-  }, 1000)
+let sum = 1 + 1; // Line 1
+let lis = document.querySelectorAll("li"); // Line 2
 ```
 
-If you copy and paste the code into a browser, you may get a sense of how it
-works: the alerting of "Hello World!" occurs a second after the code is run.
-This is because `setTimeout` takes two arguments.  The first argument is a
-function to eventually be run, and the second argument is an integer indicating
-how long to wait (in milliseconds) before running the function.  So here, our
-code says to wait 1000 milliseconds and then run the function that alert's with
-the text "Hello World".  Ok, nothing is that new.  Let's see some more code.
+In this case, when we hit the definition of `sum`, this work doesn't rely on
+any "questionable" or "unknowably long" process. As soon as the work of `Line
+1` is done, JavaScript will then go to work finding elements and assigning them
+to `lis`.
+
+But let's consider a "blocking" operation. Imagine we had a synchronous function
+called `synchronousFetch("URL STRING")` that fetches data from the network.
+
 
 ```js
-  setTimeout(function(){
-      alert('Hello world!')
-  }, 1000)
-
-  console.log('Hola')
+let tooMuchData = synchronousFetch("http://genome.example.com/...");
+let lis = document.querySelectorAll("li");
+console.log(tooMuchData);
 ```
 
-Ok, so our question with the above code is the following: which will occur
-first, the alerting or the logging.  That is, will the `console.log` statement
-wait for the `setTimeout` function to complete before running?  If you run this
-code in the browser, you will see that the `console.log` occurs first -
-JavaScript did not wait.
+That process could take a long time (slow network), or might fail (failed
+login), or might retrieve a ***huge*** amount of data (The Human Genome). It's
+possible that the `let lis` _will never execute_. While JavaScript is executing
+`synchronousFetch` it will not be able to animate gifs, you won't be able to
+open a new tab, it will stop streaming SoundCoud, it will appear "locked up."
 
-This feature, that the `setTimeout` function runs, and while it is executing
-the next line runs, is called *asynchronous code*.  By that we simply mean that
-while a previous part of the code is executing, JavaScript continues executing
-the next piece of code.
+## Describe an Asynchronous Code Bloc
 
-## Why we care
+Asynchronous code in JavaScript looks a lot like event handlers. And if we
+think about it, that makes sense. You tell JavaScript:
 
-We showed one function that takes some time, with `setTimeout`, but we will run
-into this again in the future.  Most relevantly is when we begin using
-JavaScript to make web requests and retrieve data from the Internet.  Think
-about it.  Imagine, you are building a website where you want to automatically
-display updates to a user's newsfeed without the user needing to refresh the
-page.  Well, we will want our code to first make a request for the latest
-newsfeed posts, and then wait until receiving the response before calling code
-to display that information.  This is tricky in JavaScript, because we'll need
-a way to tell our code to wait until it receives back the information before
-moving on.  Here, we are using `setTimeout` to show that JavaScript does not
-just politely wait as it's default behavior, but we will run into exactly the
-same problem when we discuss how to make requests and handle data from the
-responses with JavaScript.
+> Hey, do this thing. And then go do whatever you need. But when that first
+> thing says "I'm done," go back to it and do some work that I'm defining in a
+> function.
 
-We also care because not all languages behave this way.  For example, let's
-type "irb" in your terminal to open the interactive ruby shell and run the
-following ruby code.
+Let's imagine a function called `asynchronousFetch` that takes as arguments:
 
-```ruby
-  def wait_then_print
-    sleep 3
-    puts 'hello world'
-  end
+1. A URL String
+2. An arrow function that will have the fetched data passed into it as its
+   first argument
 
-  wait_then_print; puts 'Hola'
-  # hello world
-  # Hola
+```js
+asynchronousFetch("http://genome.example.com/...", tonOfGeneticData => sequenceClone(tonOfGeneticData));
+let lis = document.querySelectorAll("li");
 ```
 
-As you see from the code, when we use the `sleep` function in ruby.  Ruby
-properly waits the correct number of seconds before completing the function.
-However, ruby does not run any other code while it is waiting.
+In this case, JavaScript _starts_ the `asynchronousFetch`, sets `lis`...and
+some time later (who knows how long?) the fetch of data finishes and that data
+is passed into the "callback" function as `tonOfGeneticData`. Most asynchronous
+functions in JavaScript have this quality of "being passed a callback
+function." It's a helpful tool for spotting asynchronous code "in the wild."
 
-And if we think about it, it makes a bit of sense that JavaScript's default
-behavior is to keep running the next lines of code while an earlier chunk waits
-to complete.  After all, JavaScript is the language of the browser right?  So
-can you imagine if while JavaScript finished making a web request to retrieve
-updated information about your newsfeed, the browser just politely paused and
-waited, no matter how much you clicked or hovered over items?  It doesn't feel
-right.  So it's a good thing that JavaScript just keeps going right?  Yes, but
-sometimes we want JavaScript to wait before continuing to execute it's code.
-We'll discuss that in the next lesson.
+Let's try seeing how synchronous versus asynchronous works in real JavaScript
+code.
 
-## Summary
+## Identify a Synchronous Code Bloc
 
-JavaScript has asynchronous features.  By this, we mean that while JavaScript
-is waiting for one piece of code to run, it will continue on with the next line
-of code.  Other languages like ruby, politely wait for a procedure to execute
-before moving onto the next function.  And because we sometimes would like
-JavaScript to wait as well, we need to keep on trucking.
+As we have experienced in JavaScript, our code execute top-to-bottom,
+left-to-right.
+
+```js
+function getData(){
+  console.log("2. Returning instantly available data.")
+  return [{name: "Dobby the House-Elf"}, {name: "Nagini"}]
+}
+
+function main(){
+  console.log("1. Starting Script")
+  const data = getData()
+  console.log(`3. Data is currently ${JSON.stringify(data)}`)
+  console.log("4. Script Ended")
+}
+
+main();
+```
+
+We can copy and paste this into a console to see the result. But it matches our
+default model of "how code runs."
+
+## Identify An Asynchronous Code Bloc
+
+The easiest asynchronous wrapper function is `window.setTimeout()`. It takes as
+arguments:
+
+* a `Function` (the "callback" function)
+* a `Number` representing milliseconds
+
+```js
+setTimeout(() => console.log('Hello World!'), 2000)
+```
+
+This says "Hello World!"... in 2 seconds. Try it out in the DevTools console!
+
+Since this code is in an _asynchronous_ container, JavaScript can do other work
+and _come back_ when the work "on the back-burner is done."
+
+What do you think will happen here?
+
+```js
+setTimeout(() => console.log('Hello World!'), 2000)
+console.log("No, me first")
+```
+
+Sure enough:
+
+```text
+No, me first
+Hello World!
+```
+
+## Conclusion
+
+JavaScript in the browser has an asynchronous execution model. This fact has
+very little impact when you're writing simple code, but when you start
+doing work that might block the browser you'll need to leverage asynchronous
+functions. Be advised, these functions can be surprising and near every
+JavaScript developer is sooner or later bitten by a bug where they forgot to
+reckon with asynchrony.
+
+While working asynchronously can be a bit of a headache for developers, it
+allows JavaScript to do other work whenever it has opportunity. Important
+methods which require us to think asynchronously are `setTimeout()`, `fetch()`,
+among others.
