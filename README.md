@@ -18,7 +18,7 @@ example.
   setTimeout(function(){
       alert('Hello world!')
   }, 1000)
-```  
+```
 
 If you copy and paste the code into a browser, you may get a sense of how it
 works: the alerting of "Hello World!" occurs a second after the code is run.
@@ -26,7 +26,7 @@ This is because `setTimeout` takes two arguments.  The first argument is a
 function to eventually be run, and the second argument is an integer indicating
 how long to wait (in milliseconds) before running the function.  So here, our
 code says to wait 1000 milliseconds and then run the function that alert's with
-the text "Hello World".  Ok, nothing is that new.  Let's see some more code.    
+the text "Hello World".  Ok, nothing is that new.  Let's see some more code.
 
 ```js
   setTimeout(function(){
@@ -34,18 +34,18 @@ the text "Hello World".  Ok, nothing is that new.  Let's see some more code.
   }, 1000)
 
   console.log('Hola')
-```  
+```
 
 Ok, so our question with the above code is the following: which will occur
 first, the alerting or the logging.  That is, will the `console.log` statement
 wait for the `setTimeout` function to complete before running?  If you run this
 code in the browser, you will see that the `console.log` occurs first -
-JavaScript did not wait.  
+JavaScript did not wait.
 
 This feature, that the `setTimeout` function runs, and while it is executing
 the next line runs, is called *asynchronous code*.  By that we simply mean that
 while a previous part of the code is executing, JavaScript continues executing
-the next piece of code.  
+the next piece of code.
 
 ## Why we care
 
@@ -61,7 +61,7 @@ a way to tell our code to wait until it receives back the information before
 moving on.  Here, we are using `setTimeout` to show that JavaScript does not
 just politely wait as it's default behavior, but we will run into exactly the
 same problem when we discuss how to make requests and handle data from the
-responses with JavaScript.    
+responses with JavaScript.
 
 We also care because not all languages behave this way.  For example, let's
 type "irb" in your terminal to open the interactive ruby shell and run the
@@ -80,7 +80,7 @@ following ruby code.
 
 As you see from the code, when we use the `sleep` function in ruby.  Ruby
 properly waits the correct number of seconds before completing the function.
-However, ruby does not run any other code while it is waiting.  
+However, ruby does not run any other code while it is waiting.
 
 And if we think about it, it makes a bit of sense that JavaScript's default
 behavior is to keep running the next lines of code while an earlier chunk waits
@@ -98,4 +98,4 @@ JavaScript has asynchronous features.  By this, we mean that while JavaScript
 is waiting for one piece of code to run, it will continue on with the next line
 of code.  Other languages like ruby, politely wait for a procedure to execute
 before moving onto the next function.  And because we sometimes would like
-JavaScript to wait as well, we need to keep on trucking.  
+JavaScript to wait as well, we need to keep on trucking.
