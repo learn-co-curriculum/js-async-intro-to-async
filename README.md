@@ -59,23 +59,26 @@ let lis = document.querySelectorAll("li"); // Line 2
 In this case, when we hit the definition of `sum`, this work doesn't rely on
 any "questionable" or "unknowably long" process. As soon as the work of `Line
 1` is done, JavaScript will then go to work finding elements and assigning them
-to `lis`.
+to `lis` in Line 2.
 
 But let's consider a "blocking" operation. Imagine we had a synchronous function
 called `synchronousFetch("URL STRING")` that fetches data from the network.
 
-
 ```js
-let tooMuchData = synchronousFetch("http://genome.example.com/...");
-let lis = document.querySelectorAll("li");
+let tooMuchData = synchronousFetch("http://genome.example.com/..."); // Line 1
+let lis = document.querySelectorAll("li"); // Line 2
 console.log(tooMuchData);
 ```
 
-That process could take a long time (slow network), or might fail (failed
-login), or might retrieve a ***huge*** amount of data (The Human Genome). It's
-possible that the `let lis` _will never execute_. While JavaScript is executing
-`synchronousFetch` it will not be able to animate gifs, you won't be able to
-open a new tab, it will stop streaming SoundCoud, it will appear "locked up."
+That work in Line 1 could take a long time (e.g. slow network), or might fail
+(e.g. failed login), or might retrieve a ***huge*** amount of data (e.g. The Human
+Genome).
+
+It's possible that the `let lis` in Line 2 _will never execute_! While
+JavaScript is executing `synchronousFetch` it will not be able to animate gifs,
+you won't be able to open a new tab, it will stop streaming SoundCoud, it will
+appear "locked up." Recall our chef metaphor, while they prepare the biscuits
+the mashed potatoes grow cold and the boiled goose congeals. Gross.
 
 ## Describe an Asynchronous Code Bloc
 
