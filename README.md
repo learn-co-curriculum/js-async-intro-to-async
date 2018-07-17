@@ -33,7 +33,7 @@ it.
 
 Our diners would be treated to cold boiled goose, hardened potatoes, cold
 biscuits, and a fresh salad! This is not the goal. This meal was prepared in a
-_synchronous_ model, one-thing-after-the-other. Whatever happened "blocked" the
+_synchronous_ model: one-thing-after-the-other. Whatever happened "blocked" the
 rest of things that were waiting for work.
 
 _Instead_, our chef should move between each of these tasks quickly. The chef
@@ -166,7 +166,7 @@ Hello World!
 JavaScript in the browser has an asynchronous execution model. This fact has
 very little impact when you're writing simple code, but when you start
 doing work that might block the browser you'll need to leverage asynchronous
-functions. Be advised, these functions can be surprising and near every
+functions. Be advised, these functions can be surprising and nearly every
 JavaScript developer is sooner or later bitten by a bug where they forgot to
 reckon with asynchrony.
 
