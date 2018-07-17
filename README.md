@@ -85,26 +85,30 @@ the mashed potatoes grow cold and the boiled goose congeals. Gross.
 Asynchronous code in JavaScript looks a lot like event handlers. And if we
 think about it, that makes sense. You tell JavaScript:
 
-> Hey, do this thing. And then go do whatever you need. But when that first
-> thing says "I'm done," go back to it and do some work that I'm defining in a
-> function.
+> Hey, do this thing. _And then_ go do whatever you maintenance you need:
+> animate that gif, play some audio from SoundCloud, whatever. But when that
+> first thing has an "I'm done" event, go **back** to it and do some work that
+> I defined in a function when I called it.
 
 Let's imagine a function called `asynchronousFetch` that takes as arguments:
 
 1. A URL String
 2. An arrow function that will have the fetched data passed into it as its
-   first argument
+   first argument when the `asynchronousFetch` work is done
 
 ```js
-asynchronousFetch("http://genome.example.com/...", tonOfGeneticData => sequenceClone(tonOfGeneticData));
-let lis = document.querySelectorAll("li");
+asynchronousFetch("http://genome.example.com/...", tonOfGeneticData => sequenceClone(tonOfGeneticData)); // Line 1
+let lis = document.querySelectorAll("li"); // Line 2
 ```
 
-In this case, JavaScript _starts_ the `asynchronousFetch`, sets `lis`...and
-some time later (who knows how long?) the fetch of data finishes and that data
-is passed into the "callback" function as `tonOfGeneticData`. Most asynchronous
-functions in JavaScript have this quality of "being passed a callback
-function." It's a helpful tool for spotting asynchronous code "in the wild."
+In this case, JavaScript _starts_ the `asynchronousFetch` in Line 1, and then
+sets `lis` in Line 2.  Some time later (who knows how long?), the fetch of data
+finishes and _that_ data is passed into the "callback" function as
+`tonOfGeneticData` &mdash; back on Line 1.
+
+Most asynchronous functions in JavaScript have this quality of "being passed a
+callback function." It's a helpful tool for spotting asynchronous code "in the
+wild."
 
 Let's try seeing how synchronous versus asynchronous works in real JavaScript
 code.
@@ -130,8 +134,8 @@ function main(){
 main();
 ```
 
-We can copy and paste this into a console to see the result. But it matches our
-default model of "how code runs."
+We can copy and paste this into a DevTools console to see the result. But it
+matches our default model of "how code runs."
 
 ## Identify An Asynchronous Code Bloc
 
@@ -141,6 +145,9 @@ arguments:
 * a `Function` (the "callback" function)
 * a `Number` representing milliseconds
 
+The `setTimeout()` will wait the number of milliseconds and then execute the
+callback.
+
 ```js
 setTimeout(() => console.log('Hello World!'), 2000)
 ```
@@ -148,9 +155,12 @@ setTimeout(() => console.log('Hello World!'), 2000)
 This says "Hello World!"... in 2 seconds. Try it out in the DevTools console!
 
 Since this code is in an _asynchronous_ container, JavaScript can do other work
-and _come back_ when the work "on the back-burner is done."
+and _come back_ when the work "on the back-burner is done." If JavaScript
+_didn't_ have an asynchronous model, while you waited those 2 seconds, no gifs
+would animate, streaming audio might stall. Asynchronous execution makes
+browsers the exceedingly useful tools they are.
 
-What do you think will happen here?
+What do you think the output will be here?
 
 ```js
 setTimeout(() => console.log('Hello World!'), 2000)
@@ -163,6 +173,17 @@ Sure enough:
 No, me first
 Hello World!
 ```
+
+JavaScript is so committed to trying to squeeze in work when something else
+when it gets a chance that this has the exact same output!
+
+```js
+setTimeout(() => console.log('Hello World!'), 0) // 0 Milliseconds!!
+console.log("No, me first")
+```
+
+The browser has < 0 milliseconds (i.e. nanoseconds) to see if it can find any
+work to do!
 
 ## Conclusion
 
